@@ -1,0 +1,15 @@
+name: ride_lakehouse
+version: "1.0.0"
+config-version: 2
+profile: ride_lakehouse
+
+model-paths: ["models"]
+seed-paths: ["seeds"]
+test-paths: ["tests"]
+
+models:
+  ride_lakehouse:
+    staging:
+      +materialized: view
+    marts:
+      +materialized: table

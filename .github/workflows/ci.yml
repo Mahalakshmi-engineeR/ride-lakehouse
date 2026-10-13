@@ -1,0 +1,34 @@
+name: ci
+on:
+  push: {branches: [main]}
+  pull_request:
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11", cache: pip}
+      - uses: actions/setup-java@v4
+        with: {distribution: temurin, java-version: "17"}
+      - run: pip install -r requirements-dev.txt
+      - run: ruff check .
+      - run: pytest -q
+      - name: Validate docker compose
+        run: docker compose config -q
+
+  dbt:
+    runs-on: ubuntu-latest
+    env:
+      DUCKDB_PATH: /tmp/ci.duckdb
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.11"}
+      - run: pip install "dbt-duckdb~=1.8.0" duckdb==1.1.3
+      - run: bash scripts/download_data.sh   # fetches the zone seed (+ parquet, unused here)
+      - run: python scripts/make_sample_duckdb.py
+      - run: |
+          cd dbt_project
+          dbt seed && dbt run && dbt test

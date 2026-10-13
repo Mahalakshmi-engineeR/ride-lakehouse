@@ -1,0 +1,11 @@
+version: 2
+
+sources:
+  - name: lake
+    description: Silver layer published from the Delta lakehouse by loader/load_to_duckdb.py
+    schema: raw
+    tables:
+      - name: silver_trips
+        columns:
+          - name: event_id
+            tests: [not_null, unique]

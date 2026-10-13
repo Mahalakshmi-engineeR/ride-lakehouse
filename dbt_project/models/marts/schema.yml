@@ -1,0 +1,41 @@
+version: 2
+
+models:
+  - name: fct_trips
+    description: One row per valid, de-duplicated trip.
+    columns:
+      - name: trip_id
+        tests: [unique, not_null]
+      - name: pickup_zone_id
+        tests:
+          - relationships:
+              to: ref('dim_zone')
+              field: zone_id
+              config: {severity: warn}
+      - name: payment_type
+        tests:
+          - accepted_values:
+              values: [0, 1, 2, 3, 4, 5, 6]
+              quote: false
+      - name: fare_amount
+        tests: [not_null]
+
+  - name: dim_zone
+    columns:
+      - name: zone_id
+        tests: [unique, not_null]
+
+  - name: dim_date
+    columns:
+      - name: date_day
+        tests: [unique, not_null]
+
+  - name: agg_demand_by_zone_hour
+    columns:
+      - name: zone_hour_key
+        tests: [unique, not_null]
+
+  - name: agg_daily_revenue
+    columns:
+      - name: pickup_date
+        tests: [unique, not_null]

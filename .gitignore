@@ -1,0 +1,12 @@
+data/*
+!data/.gitkeep
+.env
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+dbt_project/target/
+dbt_project/logs/
+*.duckdb
+*.duckdb.wal
+.venv/
